@@ -22,7 +22,7 @@ var SYNC = (process.env['WEBRTC_SYNC'] === 'true') ? true : false;
 
 var PLATFORM = os.platform();
 var SYSTEM = os.release();
-var ARCH = process.argv[2].substring(14);
+var ARCH = 'arm';
 var NODEJS = path.resolve(process.argv[3]);
 var NODELIB = process.argv[4].substring(3).split('.')[0];
 var NODEGYP = process.argv[5];
