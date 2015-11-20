@@ -6,7 +6,7 @@ var request = require('request');
 
 var PLATFORM = os.platform();
 var ROOT = process.cwd();
-var ARCH = os.arch();
+var ARCH = 'arm';
 var URL = 'http://cide.cc:8080/webrtc/';
 var NODEVER = process.version.split('.');
 
