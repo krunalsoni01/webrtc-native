@@ -18,6 +18,7 @@ var CHROMIUM_BRANCH = 'branch-heads/47';
 var USE_OPENSSL = false;
 var USE_GTK = false;
 var USE_X11 = false;
+var BUILD_WEBRTC_TESTS = false ;
 var SYNC = (process.env['WEBRTC_SYNC'] === 'true') ? true : false;
 
 var PLATFORM = os.platform();
