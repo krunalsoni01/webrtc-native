@@ -192,6 +192,10 @@ function configure() {
   process.env['GYP_DEFINES'] += ' use_gtk='+ ((USE_GTK) ? '1' : '0');
   process.env['GYP_DEFINES'] += ' use_x11=' + ((USE_X11) ? '1' : '0');
   process.env['GYP_DEFINES'] += ' ConfigurationName=' + CONFIG;
+  process.env['GYP_DEFINES'] += ' enable_tracing=1';
+  process.env['GYP_DEFINES'] += ' include_pulse_audio=0';
+  process.env['GYP_CROSSCOMPILE'] = 1;
+  
   
   if (process.env['BUILD_WEBRTC_TESTS'] == 'true') {
     process.env['GYP_DEFINES'] += ' include_tests=1';
