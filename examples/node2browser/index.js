@@ -6,8 +6,6 @@ var WebRTC = require('../../');
 
 app.use(express.static(__dirname));
 
-var io = require('socket.io')(server);
-
 var config = {
   iceServers: [
     {
