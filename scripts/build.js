@@ -194,6 +194,7 @@ function configure() {
   process.env['GYP_DEFINES'] += ' ConfigurationName=' + CONFIG;
   process.env['GYP_DEFINES'] += ' enable_tracing=1';
   process.env['GYP_DEFINES'] += ' include_pulse_audio=0';
+  process.env['GYP_DEFINES'] += ' include_internal_audio_device=1';
   process.env['GYP_CROSSCOMPILE'] = 1;
   
   
