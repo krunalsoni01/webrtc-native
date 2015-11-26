@@ -33,6 +33,10 @@
   });
   
   socket.on('icecandidate', function(data) {
+    onsole.log("Getting the candidate ......... ")
+    var candidate_temp =  new RTCIceCandidate(data);
+	   if(!candidate_temp.candidate) return;
+	   console.log("Got the candidate ......... ")
     peer.addIceCandidate(new RTCIceCandidate(data));
   });
   
@@ -43,11 +47,11 @@
           socket.emit('answer', sdp);
         });
       });
-    });
+    },wait);
   });
   
   socket.on('answer', function (data) {
-    peer.setRemoteDescription(new RTCSessionDescription(data));
+    peer.setRemoteDescription(new RTCSessionDescription(data),wait);
   });
     
   peer.onicecandidate = function(event) {
@@ -104,6 +108,10 @@
       console.log('Peer Message:', data);
     };
   };
+  
+  function wait() {
+    console.log('waiting');         
+}
 </script>
 </body>
 </html>
