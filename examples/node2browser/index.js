@@ -82,11 +82,11 @@ io.on('connection', function(socket) {
           socket.emit('answer', sdp);
         });
       });
-    });
+    },wait);
   });
   
   socket.on('answer', function(data) {
-    peer.setRemoteDescription(new WebRTC.RTCSessionDescription(data));
+    peer.setRemoteDescription(new WebRTC.RTCSessionDescription(data),wait);
   });
     
   peer.onicecandidate = function(event) {
@@ -136,11 +136,15 @@ io.on('connection', function(socket) {
   
   peer.ondatachannel(peer.createDataChannel('echo'));
   
-  WebRTC.getUserMedia(constraints, function(stream) {
+  WebRTC.getUserMedia({audio:true,video:{height:720,width:1280}}, function(stream) {
     console.log('Sending Stream to Peer');
     peer.addStream(stream);
   });
 });
+
+function wait() {
+  console.log('waiting');
+}
 
 server.listen(8080, function() {
   console.log('Open in browser: http://localhost:8080/');
