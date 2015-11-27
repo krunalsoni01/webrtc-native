@@ -33,7 +33,7 @@
   });
   
   socket.on('icecandidate', function(data) {
-    onsole.log("Getting the candidate ......... ")
+    console.log("Getting the candidate ......... ")
     var candidate_temp =  new RTCIceCandidate(data);
 	   if(!candidate_temp.candidate) return;
 	   console.log("Got the candidate ......... ")
