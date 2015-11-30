@@ -199,7 +199,6 @@ function configure() {
   process.env['GYP_DEFINES'] += ' arm_float_abi=hard';
   process.env['GYP_DEFINES'] += ' arm_neon=1';
   process.env['GYP_DEFINES'] += ' werror=';
-  process.env['GYP_DEFINES'] += ' sysroot=$SYSROOT';
   process.env['GYP_CROSSCOMPILE'] = 1;
   
   
