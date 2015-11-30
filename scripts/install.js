@@ -8,6 +8,7 @@ var PLATFORM = os.platform();
 var ROOT = process.cwd();
 var ARCH = 'arm';
 var URL = 'http://cide.cc:8080/webrtc/';
+var BUILD_WEBRTC = true ;
 var NODEVER = process.version.split('.');
 
 NODEVER[2] = 'x';
