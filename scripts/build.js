@@ -20,7 +20,6 @@ var USE_GTK = false;
 var USE_X11 = false;
 var BUILD_WEBRTC_TESTS = false ;
 var BUILD_WEBRTC_EXAMPLES = false ;
-var BUILD_WEBRTC = true;
 var SYNC = (process.env['WEBRTC_SYNC'] === 'true') ? true : false;
 
 var PLATFORM = os.platform();
@@ -29,13 +28,11 @@ var ARCH = 'arm';
 var NODEJS = path.resolve(process.argv[3]);
 var NODELIB = process.argv[4].substring(3).split('.')[0];
 var NODEGYP = process.argv[5];
-var URL = 'http://cide.cc:8080/webrtc/';
 var NODEVER = process.version.split('.');
 
 NODEVER[2] = 'x';
 NODEVER = NODEVER.join('.');
   
-URL += 'webrtc-' + PLATFORM + '-' + ARCH + '-' + NODEVER + '.node';
   
 if (fs.existsSync(ROOT + path.sep + 'nodejs.gypi')) {
   fs.unlinkSync(ROOT + path.sep + 'nodejs.gypi');
@@ -71,29 +68,9 @@ if (os.platform() == 'win32' && ARCH == 'x64') {
 function install() {
   fs.linkSync(WEBRTC_OUT + path.sep + 'webrtc.node', path.resolve(ROOT, 'build', CONFIG, 'webrtc.node'));
   
-  if (process.env['CIDE_CREDENTIALS']) {
-    console.log('Uploading module.');
     
-    var credentials = {
-      'auth': {
-        'user': 'cIDE',
-        'pass': process.env['CIDE_CREDENTIALS'],
-      }
     };
     
-    fs.createReadStream(path.resolve(ROOT, 'build', CONFIG, 'webrtc.node')).pipe(request.put(URL, credentials, function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        console.log('Done! :)');
-      } else {
-        console.log('Upload Failed! :(');
-      }
-    }));
-  } else {
-    setTimeout(function() {
-      console.log('Done! :)');
-    }, 200);
-  }
-}
 
 function compile() {
   var res = spawn('ninja', [ '-C', WEBRTC_OUT ], {
