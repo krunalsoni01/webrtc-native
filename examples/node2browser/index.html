@@ -39,8 +39,16 @@
     },
   };
    
+  var scb = function(){
+  	console.log("scb");
+  }
+  
+  var ecb = function(){
+  	console.log("ecb");
+  }
+  
   var socket = io.connect(window.location.hostname+':'+window.location.port);
-  var peer = new window.webkitRTCPeerConnection(config, constraints);
+  var peer = new window.mozRTCPeerConnection(config, constraints);
   
   socket.on('disconnect', function() {
     peer.close();
@@ -49,25 +57,25 @@
   socket.on('icecandidate', function(data) {
 
 	console.log("Getting the candidate ......... ")
- var candidate_temp =  new RTCIceCandidate(data);
+ var candidate_temp =  new mozRTCIceCandidate(data);
 	if(!candidate_temp.candidate) return;
-	console.log("Got the candidate ......... ")
-    peer.addIceCandidate(new RTCIceCandidate(data));
+	//console.log("Got the candidate ......... ",data)
+    peer.addIceCandidate(new mozRTCIceCandidate(data));
 	
   });
   
   socket.on('offer', function(data) {
-    peer.setRemoteDescription(new RTCSessionDescription(data), function() {
+    peer.setRemoteDescription(new mozRTCSessionDescription(data), function() {
       peer.createAnswer(function(sdp) {
         peer.setLocalDescription(sdp, function() {
           socket.emit('answer', sdp);
-        });
-      });
+        },scb,ecb);
+      },scb,ecb);
     },wait);
   });
   
   socket.on('answer', function (data) {
-    peer.setRemoteDescription(new RTCSessionDescription(data),wait);
+    peer.setRemoteDescription(new mozRTCSessionDescription(data),wait);
   });
     
   peer.onicecandidate = function(event) {
@@ -80,7 +88,7 @@
     peer.createOffer(function(sdp) {
       peer.setLocalDescription(sdp, function() {
         socket.emit('offer', sdp);
-      });
+      },scb,ecb);
     });
   };
   
