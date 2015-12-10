@@ -1,9 +1,23 @@
 <html>
 <head>
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <link async rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+    <link async rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/2.4.1/octicons.css" />
+    <link async rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.4.0/animate.css" />
+  <link rel="stylesheet" href="index.css"/>
 </head>
 <body>
-  <video></video>
+  <img src="logo.png" style="height:15%;"/>
+  <div id="video">
+    <video id="videosrc"></video>
+  </div>
+  <div id="btnparent">
+  <div id="button" class="button" onclick="toggleVideo()">
+    <i class="fa fa-desktop"></i>
+    <span id="btn">View the Video</span>
+  </div>
+  </div>
 <script>
   var config = {
     iceServers: [
@@ -24,34 +38,104 @@
       OfferToReceiveVideo: true,
     },
   };
+  
+    if(navigator.userAgent.indexOf("Chrome") != -1 )
+    {
+        browserType = "chrome" ;
+    }
+    else if(navigator.userAgent.indexOf("Firefox") != -1 ) 
+    {
+        browserType = "firefox" ;
+    }
+    else {
+    	console.log("Unsupported browser!!!");
+    }
    
-  var socket = io.connect('http://localhost');
-  var peer = new window.webkitRTCPeerConnection(config, constraints);
+  var scb = function(){
+  	console.log("success call back!!");
+  }
+  
+  var ecb = function(){
+  	console.log("error call back!!");
+  }
+  
+  var socket = io.connect(window.location.hostname+':'+window.location.port);
+  
+  if(browserType == "chrome")
+    {
+        var peer = new window.webkitRTCPeerConnection(config, constraints);
+    }
+    else if(browserType == "firefox") 
+    {
+         var peer = new window.mozRTCPeerConnection(config, constraints);
+    }
+    else {
+    	console.log("Unsupported browser!!!");
+    }
   
   socket.on('disconnect', function() {
     peer.close();
   });
   
   socket.on('icecandidate', function(data) {
-    peer.addIceCandidate(new RTCIceCandidate(data));
+     console.log("Getting the candidate ......... ")
+  if(browserType == "chrome" )
+    {
+     candidate_temp =  new RTCIceCandidate(data);
+    }
+    else if(browserType == "firefox" ) 
+    {
+     candidate_temp =  new mozRTCIceCandidate(data);
+	}
+    else {
+    	console.log("Unsupported browser!!!");
+    }
+   	 if(!candidate_temp.candidate) return;
+	 //console.log("Got the candidate ......... ",data)
+     peer.addIceCandidate(candidate_temp);
   });
+
+
   
   socket.on('offer', function(data) {
-    peer.setRemoteDescription(new RTCSessionDescription(data), function() {
+    if(browserType == "chrome" )
+    {
+        RTCSessionDescription = new RTCSessionDescription(data);
+    }
+    else if(browserType == "firefox") 
+    {
+        RTCSessionDescription = new mozRTCSessionDescription(data);
+    }
+    else {
+    	console.log("Unsupported browser!!!");
+    }
+    peer.setRemoteDescription(RTCSessionDescription, function() {
       peer.createAnswer(function(sdp) {
         peer.setLocalDescription(sdp, function() {
           socket.emit('answer', sdp);
-        });
-      });
-    });
+        },scb,ecb);
+      },scb,ecb);
+    },wait);
   });
   
   socket.on('answer', function (data) {
-    peer.setRemoteDescription(new RTCSessionDescription(data));
+    if(browserType == "chrome" )
+    {
+        RTCSessionDescription = new RTCSessionDescription(data);
+    }
+    else if(browserType == "firefox") 
+    {
+        RTCSessionDescription = new mozRTCSessionDescription(data)
+    }
+    else {
+    	console.log("Unsupported browser!!!");
+    }
+    peer.setRemoteDescription(RTCSessionDescription,wait);
   });
     
   peer.onicecandidate = function(event) {
     var candidate = event.candidate || event;
+    if(!candidate.candidate) return;
     socket.emit('icecandidate', candidate);
   };
 
@@ -59,7 +143,7 @@
     peer.createOffer(function(sdp) {
       peer.setLocalDescription(sdp, function() {
         socket.emit('offer', sdp);
-      });
+      },scb,ecb);
     });
   };
   
@@ -104,6 +188,40 @@
       console.log('Peer Message:', data);
     };
   };
+function wait() {
+  console.log('waiting');         
+}
+function toggleVideo() {
+  if(browserType == "chrome" )
+  {
+    if ($("#btn")[0].innerText=="View the Video") {
+      $("#btn")[0].innerText = "Exit the Video";
+      $("#button>i").removeClass("fa fa-desktop").addClass("fa fa-sign-out");
+      document.getElementById("videosrc").style.display='block';
+    }
+    else {
+      $("#btn")[0].innerText = "View the Video";
+      $("#button>i").removeClass("fa fa-sign-out").addClass("fa fa-desktop");
+      document.getElementById("videosrc").style.display='none';
+    }
+  }
+  else if(browserType == "firefox" ) 
+  {
+    if ($("#btn")[0].innerHTML=="View the Video") {
+      $("#btn")[0].innerHTML = "Exit the Video";
+      $("#button>i").removeClass("fa fa-desktop").addClass("fa fa-sign-out");
+      document.getElementById("videosrc").style.display='block';
+    }
+    else {
+      $("#btn")[0].innerHTML = "View the Video";
+      $("#button>i").removeClass("fa fa-sign-out").addClass("fa fa-desktop");
+      document.getElementById("videosrc").style.display='none';
+    }
+  }
+  else {
+  	console.log("Unsupported browser!!!");
+  }
+}
 </script>
 </body>
 </html>
